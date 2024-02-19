@@ -6,7 +6,14 @@ export default function Messages({ id, author, message, date }) {
     html2canvas(div)
       .then((canvas) => {
         const imageurl = canvas.toDataURL('image/jpeg');
-        window.location.href = `instagram://library?AssetPath=${imageurl}`;
+
+        const link = document.createElement('a');
+        link.href = imageurl;
+        link.download = `message${id}.jpg`;
+
+        link.click();
+
+        window.location.href = 'instagram://library';
       })
       .catch((error) => console.error(error));
   };
