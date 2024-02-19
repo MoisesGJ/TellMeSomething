@@ -7,13 +7,13 @@ export default function Messages({ id, author, message, date }) {
       .then((canvas) => {
         const imageurl = canvas.toDataURL('image/jpeg');
 
-        const link = document.createElement('a');
+        /* const link = document.createElement('a');
         link.href = imageurl;
         link.download = `message${id}.jpg`;
 
-        link.click();
+        link.click(); */
 
-        window.location.href = 'instagram://library';
+        window.location.href = `instagram://library?OpenInEditor=1&LocalIdentifier=+${imageurl}`;
       })
       .catch((error) => console.error(error));
   };
