@@ -1,16 +1,19 @@
-import html2canvas from 'html2canvas';
-import { saveAs } from 'file-saver';
+import generateInstagramStory from '../../lib/canvas2html';
 
+/* import html2canvas from 'html2canvas';
+import { saveAs } from 'file-saver';
+ */
 export default function Messages({ id, author, message, date }) {
   const handlerSaveImage = () => {
-    const div = document.getElementById(id);
+    /* const div = document.getElementById(id);
     html2canvas(div)
       .then((canvas) => {
         const imageurl = canvas.toDataURL('image/jpeg');
 
         saveAs(imageurl, `image${id}.jpg`);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
+    generateInstagramStory('Usuario', ' ¡Hola, mundo!¡');
   };
 
   const handlerGoToIg = () =>
