@@ -93,7 +93,7 @@ function App() {
           ></textarea>
 
           {errors.message && (
-            <p className="text-rose-600 w-full -mt-3 rounded-lg text-center my-auto  font-medium text-sm">
+            <p className="text-rose-600 w-full -mt-3 rounded-lg text-center my-auto  font-medium text-xs">
               {errors.message.message}
             </p>
           )}
@@ -122,7 +122,7 @@ function App() {
 
           {anonymous ||
             (errors.author && (
-              <p className="text-rose-600 w-full -mt-3 text-center my-auto  font-medium text-sm">
+              <p className="text-rose-600 w-full -mt-3 text-center my-auto  font-medium text-xs">
                 {errors.author.message}
               </p>
             ))}
@@ -144,7 +144,7 @@ function App() {
         </form>
       </main>
 
-      {anonymous && <footer className="absolute bottom-1 md:bottom-5 end-1/2 translate-x-1/2 text-white font-light text-sm">
+      {anonymous && <footer className="absolute bottom-1 md:bottom-5 end-1/2 translate-x-1/2 text-white font-light text-xs md:text-sm">
         Powered by <b className='shadow-bright'>Moisés GJ</b>
       </footer>}
     </>
