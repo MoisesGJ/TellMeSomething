@@ -64,7 +64,7 @@ function App() {
         <img
           src="https://res.cloudinary.com/dqfmigdvh/image/upload/f_auto,q_auto/ix0pdq4ieptkzkm2c0ng"
           alt=""
-          className="rounded-full w-64 h-64 aspect-square shadow-gray-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
+          className="rounded-full size-48 md:size-56 aspect-square shadow-gray-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
         />
 
         <h1 className="font-extrabold  mt-2 text-center text-xl text-white">
@@ -80,7 +80,7 @@ function App() {
           <textarea
             id="message"
             rows="4"
-            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="block resize-none p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Escribe tu mensaje"
             {...register('message', {
               required: 'Debes de escribir un mensaje',
@@ -107,7 +107,7 @@ function App() {
           {anonymous || (
             <input
               type="text"
-              className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+              className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Escribe tu nombre"
               {...register('author', {
                 required: 'Debes de escribir un nombre',
@@ -135,17 +135,17 @@ function App() {
               defaultChecked
             />
 
-            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Envía mensaje anónimx
+              Envía el mensaje anónimx
             </span>
           </label>
         </form>
       </main>
 
-      <footer className="absolute bottom-5 end-1/2 translate-x-1/2 text-white">
-        Powered By <b>MoisesGJ</b>
-      </footer>
+      {anonymous && <footer className="absolute bottom-5 end-1/2 translate-x-1/2 text-white font-light text-sm">
+        Powered by <b className='shadow-bright'>Moisés GJ</b>
+      </footer>}
     </>
   );
 }
