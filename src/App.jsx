@@ -59,24 +59,25 @@ function App() {
 
   return (
     <>
-      <main className="flex flex-col gap-5 justify-center items-center">
+      <main className="flex flex-col md:flex-row gap-5 md:space-x-8 lg:space-x-12 justify-center items-center">
         {openModal && <Modal />}
+
         <img
           src="https://res.cloudinary.com/dqfmigdvh/image/upload/f_auto,q_auto/ix0pdq4ieptkzkm2c0ng"
           alt=""
-          className="rounded-full size-48 md:size-56 aspect-square shadow-gray-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
+          className="rounded-full size-48 md:size-auto max-w-72 aspect-square shadow-gray-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
         />
 
-        <h1 className="font-extrabold  mt-2 text-center text-xl text-white">
-          Mensaje para{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-300">
-            Diana
-          </span>{' '}
-        </h1>
         <form
           className="flex flex-col gap-5 justify-center items-center"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <h1 className="font-extrabold mt-2 text-center text-xl text-white">
+            Mensaje para{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-300">
+              Diana
+            </span>{' '}
+          </h1>
           <textarea
             id="message"
             rows="4"
@@ -143,7 +144,7 @@ function App() {
         </form>
       </main>
 
-      {anonymous && <footer className="absolute bottom-5 end-1/2 translate-x-1/2 text-white font-light text-sm">
+      {anonymous && <footer className="absolute bottom-1 md:bottom-5 end-1/2 translate-x-1/2 text-white font-light text-sm">
         Powered by <b className='shadow-bright'>Moisés GJ</b>
       </footer>}
     </>
