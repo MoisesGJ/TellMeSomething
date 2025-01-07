@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 
 import Modal from './components/ModalSend';
 import './App.css';
+import { saveDataToFirebase } from './utils/saveData';
 
 function App() {
   const [anonymous, setAnonymous] = useState(true);
@@ -38,18 +39,15 @@ function App() {
   };
 
   const onSubmit = (values) => {
-    anonymous && (values['author'] = 'Anónimx');
-    values['date'] = getDate();
-
-    const URI = 'https://anonymousapp-c4f72-default-rtdb.firebaseio.com/.json';
-
-    fetch(URI, { method: 'POST', body: JSON.stringify(values) })
-      .then((response) => {
-        if (response.ok) {
+    saveDataToFirebase(values, anonymous, getDate)
+      .then((success) => {
+        if (success) {
           handleOpen();
         }
       })
-      .catch((error) => console.error('Error:', error));
+      .catch((error) => {
+        console.error("Hubo un error:", error);
+      });
   };
 
   const handlerAnonymous = () => {
@@ -59,7 +57,7 @@ function App() {
 
   return (
     <>
-      <main className="flex flex-col md:flex-row gap-5 md:space-x-8 lg:space-x-12 justify-center items-center">
+      <main className="flex flex-col md:flex-row gap-5 md:space-x-8 lg:space-x-12 justify-center items-center relative">
         {openModal && <Modal />}
 
         <img
