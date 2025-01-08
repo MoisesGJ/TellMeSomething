@@ -1,8 +1,9 @@
+import './App.css';
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import Modal from './components/ModalSend';
-import './App.css';
 import { saveDataToFirebase } from './utils/saveData';
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
 
     const timer = setTimeout(() => {
       setOpenModal(false);
-    }, 3000);
+    }, 2000);
     return () => clearTimeout(timer);
   };
 
@@ -57,13 +58,14 @@ function App() {
 
   return (
     <>
-      <main className="flex flex-col md:flex-row gap-5 md:space-x-8 lg:space-x-12 justify-center items-center relative">
+      <main className="flex flex-col md:flex-row gap-5 md:space-x-8 lg:space-x-12 justify-center items-center relative p-3">
         {openModal && <Modal />}
 
+        {/* https://res.cloudinary.com/dqfmigdvh/image/upload/f_auto,q_auto/ix0pdq4ieptkzkm2c0ng */}
         <img
-          src="https://res.cloudinary.com/dqfmigdvh/image/upload/f_auto,q_auto/ix0pdq4ieptkzkm2c0ng"
+          src="/just_me.jpg"
           alt=""
-          className="rounded-full size-48 md:size-auto max-w-72 aspect-square shadow-gray-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
+          className="rounded-full size-48 md:size-auto max-w-72 aspect-square object-cover shadow-gray-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
         />
 
         <form
@@ -72,8 +74,8 @@ function App() {
         >
           <h1 className="font-extrabold mt-2 text-center text-xl text-white">
             Mensaje para{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-300">
-              Diana
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">
+              Moi
             </span>{' '}
           </h1>
           <textarea
@@ -91,7 +93,7 @@ function App() {
           ></textarea>
 
           {errors.message && (
-            <p className="text-rose-600 w-full -mt-3 rounded-lg text-center my-auto  font-medium text-xs">
+            <p className="text-rose-500 w-full -mt-3 rounded-lg text-center my-auto  font-medium text-xs">
               {errors.message.message}
             </p>
           )}
@@ -120,7 +122,7 @@ function App() {
 
           {anonymous ||
             (errors.author && (
-              <p className="text-rose-600 w-full -mt-3 text-center my-auto  font-medium text-xs">
+              <p className="text-rose-500 w-full -mt-3 text-center my-auto  font-medium text-xs">
                 {errors.author.message}
               </p>
             ))}
@@ -134,9 +136,9 @@ function App() {
               defaultChecked
             />
 
-            <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 dark:peer-focus:ring-amber-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-amber-500"></div>
             <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              Envía el mensaje anónimx
+              Envíar mensaje anónimx
             </span>
           </label>
         </form>

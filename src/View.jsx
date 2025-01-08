@@ -14,30 +14,31 @@ function View() {
 
   return (
     <>
-      <main className="w-screen px-3 mb-10">
-        <h1 className="font-extrabold text-3xl text-white my-5">
-          Mis mensajes
+      <main className="w-screen py-10 flex flex-col justify-center items-center relative min-h-screen">
+        <h1 className="font-extrabold text-3xl text-white my-5 mb-16">
+          Mis mensajes <span className='text-xl md:text-3xl'>({data.length})</span>
         </h1>
-        {data.map((element, indx) => {
-          const { author, message, date } = element;
-          return (
-            <Messages
-              key={indx}
-              author={author}
-              message={message}
-              date={date}
-              id={indx}
-            />
-          );
-        })}
-      </main>
+        <div className="my-5 flex flex-wrap gap-5 justify-center px-3">
+          {data.map((element, indx) => {
+            const { author, message, date } = element;
+            return (
+              <Messages
+                key={indx}
+                author={author}
+                message={message}
+                date={date}
+                id={indx}
+              />
+            );
+          })}
+        </div>
 
-      <footer className="backdrop-filter backdrop-blur-sm w-screen text-center fixed bottom-0 px-3 pb-3 text-white rounded-xl">
-        <span>
-          Powered By <b>MoisesGJ</b>
-        </span>
-      </footer>
+        <footer className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-white font-light text-xs md:text-sm mt-auto">
+          Powered by <b className="shadow-bright">Moisés GJ</b>
+        </footer>
+      </main>
     </>
+
   );
 }
 

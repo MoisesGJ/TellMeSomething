@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/View/Diana',
+    path: '/view',
     element: <View />,
   },
 ]);
