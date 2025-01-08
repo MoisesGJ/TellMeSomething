@@ -7,6 +7,7 @@ import ResponsiveText from '../ResponsiveText';
 import ShareIcon from '../svg/ShareIcon';
 
 import { toPng } from 'html-to-image';
+import ShareIconIg from '../svg/ShareIgIcon';
 
 
 export default function Messages(props) {
@@ -37,7 +38,6 @@ export default function Messages(props) {
         link.download = `image${id}.png`;
         link.href = dataUrl;
         link.click();
-        handlerGoToIg();
       }).finally(() => {
         btn.style.visibility = 'visible';
       });
@@ -53,10 +53,15 @@ export default function Messages(props) {
         <div className="w-3 h-3 bg-green-600 rounded-full"></div>
       </div>
       <ResponsiveText message={message} />
-      <button ref={btnRef} className="absolute bottom-4 end-10 select-none hover:shadow-lg hover:shadow-gray-900/20" type="button"
-        onClick={() => handlerSaveImage(divRef.current, btnRef.current)}>
-        <ShareIcon />
-      </button>
+      <div ref={btnRef} className='absolute bottom-4 w-full px-4 select-none flex flex-row-reverse justify-between space-x-3'>
+        <button className="hover:bg-gray-400/10 rounded-full p-1" type="button"
+          onClick={() => handlerSaveImage(divRef.current, btnRef.current)}>
+          <ShareIcon />
+        </button>
+        <button type='button' className="hover:bg-gray-400/10 rounded-full p-1" onClick={handlerGoToIg}>
+          <ShareIconIg />
+        </button>
+      </div>
 
 
       {author === 'Anónimx' || <h3 className='px-3 py-1 text-xs rounded-[2.5rem] absolute bottom-2 bg-gray-400/20'>{author}</h3>}
