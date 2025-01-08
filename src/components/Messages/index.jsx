@@ -1,17 +1,14 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 
-//import generateInstagramStory from '../../lib/canvas2html';
 
 import ResponsiveText from '../ResponsiveText';
 import ShareIcon from '../svg/ShareIcon';
 
 import { toPng } from 'html-to-image';
 
-/* import html2canvas from 'html2canvas';
-import { saveAs } from 'file-saver';
- */
+
 export default function Messages(props) {
   const divRef = useRef(null);
   const btnRef = useRef(null);
@@ -19,30 +16,21 @@ export default function Messages(props) {
   const { id, author, message } = props;
 
 
-  /*   const handlerGoToIg = () =>
-      (window.location.href = `instagram://library?OpenInEditor=1&LocalIdentifier=+1`); */
+  const handlerGoToIg = () =>
+    (window.location.href = `instagram://library?OpenInEditor=1&LocalIdentifier=+1`);
 
   const handlerSaveImage = (ref, btn) => {
-    /* const div = document.getElementById(id);
-    html2canvas(div)
-      .then((canvas) => {
-        const imageurl = canvas.toDataURL('image/jpeg');
 
-        saveAs(imageurl, `image${id}.jpg`);
-      })
-      .catch((error) => console.error(error)); */
-    //generateInstagramStory('Usuario', ' ¡Hola, mundo!¡');
 
-    //handlerGoToIg();
 
     btn.style.visibility = 'hidden';
 
     toPng(ref, {
       cacheBust: false, fontEmbedCSS: `
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-        * {
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+      * {
           font-family: 'Poppins', sans-serif;
-        }
+          }
       ` })
       .then((dataUrl) => {
         const link = document.createElement('a');
@@ -51,6 +39,7 @@ export default function Messages(props) {
         link.click();
       }).finally(() => {
         btn.style.visibility = 'visible';
+        handlerGoToIg();
       });
   }
 
