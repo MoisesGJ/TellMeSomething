@@ -37,9 +37,9 @@ export default function Messages(props) {
         link.download = `image${id}.png`;
         link.href = dataUrl;
         link.click();
+        handlerGoToIg();
       }).finally(() => {
         btn.style.visibility = 'visible';
-        handlerGoToIg();
       });
   }
 
