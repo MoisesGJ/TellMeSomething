@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import Modal from './components/ModalSend';
 import { saveDataToFirebase } from './utils/saveData';
 import ImageIcon from './components/svg/ImageIcon';
+import { CheckIcon } from './components/svg/CheckIcon';
 
 function App() {
   const fileInputRef = useRef(null);
@@ -35,12 +36,12 @@ function App() {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile); // Guardar el archivo seleccionado
+    setFile(selectedFile);
   };
 
 
   const handleButtonClick = () => {
-    fileInputRef.current.click(); // Abre el selector de archivos cuando se hace clic en el botón
+    fileInputRef.current.click();
   };
 
   const getDate = () => {
@@ -93,16 +94,18 @@ function App() {
             </span>{' '}
           </h1>
           <div className="w-full relative">
-            <div className="absolute end-2 bottom-2 rounded-full bg-gray-700 p-1">
-              <button type="button" onClick={handleButtonClick}
-              >
+            <div className="absolute end-3 bottom-2 rounded-full bg-gray-700 p-1">
+              <button type="button" onClick={handleButtonClick} className={`${file ? '[&>svg]:stroke-green-500' : '[&>svg]:stroke-gray-300'}`}>
+                {file && <div className="absolute -end-2">
+                  <CheckIcon />
+                </div>}
                 <ImageIcon />
               </button>
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*" // Esto restringe los archivos a imágenes
-                style={{ display: 'none' }} // Oculta el input
+                accept="image/*"
+                style={{ display: 'none' }}
                 onChange={handleFileChange}
               />
             </div>
