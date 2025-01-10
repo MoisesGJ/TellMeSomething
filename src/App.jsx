@@ -1,12 +1,16 @@
 import './App.css';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
 import Modal from './components/ModalSend';
 import { saveDataToFirebase } from './utils/saveData';
+import ImageIcon from './components/svg/ImageIcon';
 
 function App() {
+  const fileInputRef = useRef(null);
+
+  const [file, setFile] = useState(null);
   const [anonymous, setAnonymous] = useState(true);
   const [openModal, setOpenModal] = useState(false);
 
@@ -28,6 +32,17 @@ function App() {
     return () => clearTimeout(timer);
   };
 
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile); // Guardar el archivo seleccionado
+  };
+
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click(); // Abre el selector de archivos cuando se hace clic en el botón
+  };
+
   const getDate = () => {
     const today = new Date();
     const month = today.getMonth() + 1;
@@ -40,7 +55,7 @@ function App() {
   };
 
   const onSubmit = (values) => {
-    saveDataToFirebase(values, anonymous, getDate)
+    saveDataToFirebase(values, anonymous, getDate, file)
       .then((success) => {
         if (success) {
           handleOpen();
@@ -61,10 +76,9 @@ function App() {
       <main className="flex flex-col md:flex-row gap-5 md:space-x-8 lg:space-x-12 justify-center items-center relative p-3">
         {openModal && <Modal />}
 
-        {/* https://res.cloudinary.com/dqfmigdvh/image/upload/f_auto,q_auto/ix0pdq4ieptkzkm2c0ng */}
         <img
           src="/just_me.jpg"
-          alt=""
+          alt="Foto de Moisés GJ"
           className="rounded-full size-48 md:size-auto max-w-72 aspect-square object-cover shadow-gray-100 shadow-[0_3px_10px_rgb(0,0,0,0.2)]"
         />
 
@@ -78,19 +92,36 @@ function App() {
               Moi
             </span>{' '}
           </h1>
-          <textarea
-            id="message"
-            rows="4"
-            className="block resize-none p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Escribe tu mensaje"
-            {...register('message', {
-              required: 'Debes de escribir un mensaje',
-              minLength: {
-                message: '¿Es un mensaje correcto?',
-                value: 3,
-              },
-            })}
-          ></textarea>
+          <div className="w-full relative">
+            <div className="absolute end-2 bottom-2 rounded-full bg-gray-700 p-1">
+              <button type="button" onClick={handleButtonClick}
+              >
+                <ImageIcon />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*" // Esto restringe los archivos a imágenes
+                style={{ display: 'none' }} // Oculta el input
+                onChange={handleFileChange}
+              />
+            </div>
+            <textarea
+              id="message"
+              rows="4"
+              className="block resize-none p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Escribe tu mensaje"
+              {...register('message', {
+                required: 'Debes de escribir un mensaje',
+                minLength: {
+                  message: '¿Es un mensaje correcto?',
+                  value: 3,
+                },
+              })}
+            >
+
+            </textarea>
+          </div>
 
           {errors.message && (
             <p className="text-rose-500 w-full -mt-3 rounded-lg text-center my-auto  font-medium text-xs">

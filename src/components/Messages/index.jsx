@@ -14,7 +14,7 @@ export default function Messages(props) {
   const divRef = useRef(null);
   const btnRef = useRef(null);
 
-  const { id, author, message } = props;
+  const { id, author, message, image } = props;
 
 
   const handlerGoToIg = () =>
@@ -46,7 +46,8 @@ export default function Messages(props) {
 
 
   return (
-    <div ref={divRef} className="bg-white/90 border-2 min-w-72 w-full max-w-96 h-56 rounded-[2.5rem] relative flex justify-center items-center" id={id}>
+    <div ref={divRef} className={`bg-white/90 border-2 min-w-72 w-full max-w-96 h-56 rounded-[2.5rem] relative flex justify-center items-center ${image && 'my-40'}`} id={id}>
+      {image && <img src={image} className='absolute -top-20 rounded-full size-36 object-cover' />}
       <div className="absolute top-5 start-6 flex space-x-2">
         <div className="w-3 h-3 bg-red-600 rounded-full"></div>
         <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
@@ -74,4 +75,5 @@ Messages.propTypes = {
   author: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
+  image: PropTypes.string,
 };

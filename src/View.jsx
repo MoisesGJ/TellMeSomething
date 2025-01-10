@@ -8,8 +8,18 @@ function View() {
     fetch('https://anonymousapp-c4f72-default-rtdb.firebaseio.com/.json')
       .then((resJson) => resJson.json())
       .then((res) => {
-        setData(Object.values(res));
+        const reorderedData = Object.values(res).reduce((acc, item) => {
+          if (item.imageURL) {
+            acc.push(item);
+          } else {
+            acc.unshift(item);
+          }
+          return acc;
+        }, []);
+
+        setData(reorderedData);
       });
+
   }, []);
 
   return (
@@ -28,6 +38,7 @@ function View() {
                 message={message}
                 date={date}
                 id={indx}
+                image={element.imageURL}
               />
             );
           })}
