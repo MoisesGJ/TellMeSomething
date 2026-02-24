@@ -1,6 +1,6 @@
 import { ref, push, set } from "firebase/database";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage"; // Importar getDownloadURL
-import { database } from "../lib/firebaseConfig";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { database, authReady } from "../lib/firebaseConfig";
 
 export const saveDataToFirebase = async (values, anonymous, getDate, file) => {
     if (anonymous) {
@@ -10,7 +10,10 @@ export const saveDataToFirebase = async (values, anonymous, getDate, file) => {
     values['date'] = getDate();
 
     try {
-        // Subir la imagen si se ha seleccionado un archivo
+        // Esperar a que el usuario esté autenticado (anónimo o con email)
+        // antes de intentar cualquier escritura en la base de datos.
+        await authReady;
+
         let imageURL = null;
         if (file) {
             if (!file.type.startsWith("image/")) {
@@ -18,33 +21,21 @@ export const saveDataToFirebase = async (values, anonymous, getDate, file) => {
                 return false;
             }
 
-            // Obtener la instancia de Firebase Storage
             const storage = getStorage();
-
-            // Crear una referencia en Firebase Storage con un nombre único
             const imageRef = storageRef(storage, `images/${Date.now()}-${file.name}`);
-
-            // Subir el archivo a Firebase Storage
             const snapshot = await uploadBytes(imageRef, file);
-
-            // Obtener la URL de descarga de la imagen
-            imageURL = await getDownloadURL(snapshot.ref); // Usar getDownloadURL aquí
-            console.log('Imagen subida exitosamente:', imageURL);
+            imageURL = await getDownloadURL(snapshot.ref);
         }
 
-        // Agregar la URL de la imagen a los datos (si se subió una imagen)
         if (imageURL) {
             values['imageURL'] = imageURL;
         }
 
-        // Guardar los valores en Firebase Realtime Database
         const postsRef = ref(database);
         const newPostRef = push(postsRef);
-
         await set(newPostRef, values);
 
-        console.log("Datos guardados con éxito");
-        return { success: true, imageURL, postId: newPostRef.key }; // Devolver más información si es necesario
+        return { success: true, imageURL, postId: newPostRef.key };
     } catch (error) {
         console.error("Error al guardar los datos:", error);
         return false;
