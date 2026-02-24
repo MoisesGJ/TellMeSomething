@@ -3,7 +3,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow-x: hidden;
+}
+
+main {
+  overflow-y: hidden;
 }
 
 .shadow-bright {
