@@ -1,6 +1,6 @@
 
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
@@ -14,19 +14,19 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
-
-
-const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("Usuario autenticado:", user);
-    } else {
-        // El usuario no está autenticado
-        console.log("No hay usuario autenticado");
-    }
-});
-
+const auth = getAuth(app);
 const database = getDatabase(app);
+
+// Resuelve cuando hay un usuario autenticado (anónimo o con email).
+// Esto garantiza que cualquier escritura en la DB ocurra con un token válido.
+export const authReady = new Promise((resolve) => {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            resolve(user);
+        } else {
+            signInAnonymously(auth).catch(console.error);
+        }
+    });
+});
 
 export { auth, database };
