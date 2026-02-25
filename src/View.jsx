@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ref, get } from 'firebase/database';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, database } from './lib/firebaseConfig';
 import Messages from './components/Messages';
 
@@ -63,9 +63,22 @@ function LoginForm({ onLogin, error, loading }) {
 function View() {
   const [data, setData] = useState([]);
   const [isOwner, setIsOwner] = useState(false);
+  const [sessionChecking, setSessionChecking] = useState(true);
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
+
+  // Restaurar sesión activa desde Firebase Auth (token en localStorage)
+  // Si el usuario ya inició sesión antes, no se muestra el formulario de login.
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && OWNER_EMAIL && user.email === OWNER_EMAIL) {
+        setIsOwner(true);
+      }
+      setSessionChecking(false);
+    });
+    return unsubscribe;
+  }, []);
 
   const handleLogin = async (email, password) => {
     setLoginError('');
@@ -118,6 +131,14 @@ function View() {
       .catch(console.error)
       .finally(() => setDataLoading(false));
   }, [isOwner]);
+
+  if (sessionChecking) {
+    return (
+      <main className="w-screen min-h-screen flex justify-center items-center">
+        <div className="size-10 rounded-full border-4 border-white/20 border-t-white animate-spin" />
+      </main>
+    );
+  }
 
   if (!isOwner) {
     return (
