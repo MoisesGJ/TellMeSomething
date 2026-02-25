@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth, database } from './lib/firebaseConfig';
 import Messages from './components/Messages';
 
-const OWNER_EMAIL = 'jeffersonm5813@gmail.com';
+const OWNER_EMAIL = import.meta.env.VITE_OWNER_EMAIL;
 
 function LoginForm({ onLogin, error, loading }) {
   const [email, setEmail] = useState('');
@@ -70,6 +70,13 @@ function View() {
   const handleLogin = async (email, password) => {
     setLoginError('');
     setLoginLoading(true);
+
+    if (!OWNER_EMAIL) {
+      setLoginError('Configuración incompleta. Contacta al administrador.');
+      setLoginLoading(false);
+      return;
+    }
+
     try {
       const credential = await signInWithEmailAndPassword(auth, email, password);
       if (credential.user.email !== OWNER_EMAIL) {
@@ -131,7 +138,7 @@ function View() {
       {dataLoading ? (
         <p className="text-white/50 text-sm">Cargando mensajes...</p>
       ) : (
-        <div className="my-5 flex flex-wrap gap-x-5 gap-y-48 justify-center px-3">
+        <div className="my-5 flex flex-wrap gap-x-5 gap-y-16 justify-center px-3 pt-16">
           {data.map((element, indx) => (
             <Messages
               key={element.firebaseKey}

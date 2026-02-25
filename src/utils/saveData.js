@@ -18,7 +18,13 @@ export const saveDataToFirebase = async (values, anonymous, getDate, file) => {
         if (file) {
             if (!file.type.startsWith("image/")) {
                 console.error("El archivo seleccionado no es una imagen válida");
-                return false;
+                return { success: false, error: 'invalid_type' };
+            }
+
+            const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+            if (file.size > MAX_FILE_SIZE_BYTES) {
+                console.error("El archivo supera el tamaño máximo de 5 MB");
+                return { success: false, error: 'file_too_large' };
             }
 
             const storage = getStorage();

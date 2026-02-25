@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import ResponsiveText from '../ResponsiveText';
 import ShareIcon from '../svg/ShareIcon';
@@ -16,11 +16,20 @@ export default function Messages({ id, author, message, date, image }) {
   const cardRef = useRef(null);
   const buttonsRef = useRef(null);
   const [shareHint, setShareHint] = useState('');
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    if (image) setImageLoaded(false);
+  }, [image]);
 
   const generatePng = async () => {
     buttonsRef.current.style.visibility = 'hidden';
     try {
-      return await toPng(cardRef.current, { cacheBust: false, fontEmbedCSS: FONT_EMBED_CSS });
+      return await toPng(cardRef.current, {
+        cacheBust: false,
+        fontEmbedCSS: FONT_EMBED_CSS,
+        backgroundColor: '#ffffff',
+      });
     } finally {
       buttonsRef.current.style.visibility = 'visible';
     }
@@ -65,16 +74,24 @@ export default function Messages({ id, author, message, date, image }) {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Zona de imagen: reserva espacio fijo para mantener el grid consistente */}
-      <div className="h-28 flex items-end justify-center mb-[-3.5rem] relative z-10">
-        {image && (
+      {/* Zona de imagen: solo se renderiza si hay imagen (no deja hueco en cards sin imagen) */}
+      {image && (
+        <div className="h-28 flex items-end justify-center mb-[-3.5rem] relative z-10">
+          {!imageLoaded && (
+            <div className="size-28 rounded-full border-4 border-white shadow-lg bg-white/20 flex items-center justify-center">
+              <div className="size-8 rounded-full border-4 border-gray-300 border-t-gray-600 animate-spin" />
+            </div>
+          )}
           <img
             src={image}
             alt="profile"
-            className="size-28 rounded-full object-cover border-4 border-white shadow-lg"
+            onLoad={() => setImageLoaded(true)}
+            className={`size-28 rounded-full object-cover border-4 border-white shadow-lg transition-opacity duration-300 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0 absolute'
+            }`}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Tarjeta */}
       <div

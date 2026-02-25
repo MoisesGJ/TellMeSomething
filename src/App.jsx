@@ -8,12 +8,17 @@ import { saveDataToFirebase } from './utils/saveData';
 import ImageIcon from './components/svg/ImageIcon';
 import { CheckIcon } from './components/svg/CheckIcon';
 
+const SUBMIT_COOLDOWN_MS = 60_000;
+const STORAGE_KEY = 'tms_last_submit';
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
 function App() {
   const fileInputRef = useRef(null);
 
   const [file, setFile] = useState(null);
   const [anonymous, setAnonymous] = useState(true);
   const [openModal, setOpenModal] = useState(false);
+  const [cooldownError, setCooldownError] = useState('');
 
   const {
     handleSubmit,
@@ -26,6 +31,8 @@ function App() {
     setOpenModal(true);
     reset();
     setAnonymous(true);
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
 
     const timer = setTimeout(() => {
       setOpenModal(false);
@@ -33,9 +40,18 @@ function App() {
     return () => clearTimeout(timer);
   };
 
-
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
+    if (!selectedFile) return;
+
+    if (selectedFile.size > MAX_FILE_SIZE_BYTES) {
+      setCooldownError('La imagen no puede superar los 5 MB.');
+      fileInputRef.current.value = '';
+      setFile(null);
+      return;
+    }
+
+    setCooldownError('');
     setFile(selectedFile);
   };
 
@@ -56,14 +72,33 @@ function App() {
   };
 
   const onSubmit = (values) => {
+    const lastSubmit = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+    const now = Date.now();
+    const elapsed = now - lastSubmit;
+
+    if (elapsed < SUBMIT_COOLDOWN_MS) {
+      const secondsLeft = Math.ceil((SUBMIT_COOLDOWN_MS - elapsed) / 1000);
+      setCooldownError(`Espera ${secondsLeft}s antes de enviar otro mensaje.`);
+      return;
+    }
+
+    localStorage.setItem(STORAGE_KEY, String(now));
+    setCooldownError('');
+
     saveDataToFirebase(values, anonymous, getDate, file)
-      .then((success) => {
-        if (success) {
+      .then((result) => {
+        if (result && result.success) {
           handleOpen();
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+          if (result?.error === 'file_too_large') {
+            setCooldownError('La imagen no puede superar los 5 MB.');
+          }
         }
       })
       .catch((error) => {
         console.error("Hubo un error:", error);
+        localStorage.removeItem(STORAGE_KEY);
       });
   };
 
@@ -120,6 +155,10 @@ function App() {
                   message: '¿Es un mensaje correcto?',
                   value: 3,
                 },
+                maxLength: {
+                  message: 'El mensaje no puede superar los 500 caracteres.',
+                  value: 500,
+                },
               })}
             >
 
@@ -129,6 +168,12 @@ function App() {
           {errors.message && (
             <p className="text-rose-500 w-full -mt-3 rounded-lg text-center my-auto  font-medium text-xs">
               {errors.message.message}
+            </p>
+          )}
+
+          {cooldownError && (
+            <p className="text-rose-500 w-full -mt-3 rounded-lg text-center my-auto font-medium text-xs">
+              {cooldownError}
             </p>
           )}
 
