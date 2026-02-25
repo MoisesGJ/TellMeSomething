@@ -13,7 +13,8 @@ const FONT_EMBED_CSS = `
 `;
 
 export default function Messages({ id, author, message, date, image }) {
-  const cardRef = useRef(null);
+  // wrapperRef engloba imagen circular + card → lo que se exporta al PNG
+  const wrapperRef = useRef(null);
   const buttonsRef = useRef(null);
   const [shareHint, setShareHint] = useState('');
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -25,10 +26,11 @@ export default function Messages({ id, author, message, date, image }) {
   const generatePng = async () => {
     buttonsRef.current.style.visibility = 'hidden';
     try {
-      return await toPng(cardRef.current, {
+      // Sin backgroundColor → fondo transparente fuera de la card = esquinas redondeadas correctas en PNG
+      return await toPng(wrapperRef.current, {
         cacheBust: false,
         fontEmbedCSS: FONT_EMBED_CSS,
-        backgroundColor: '#ffffff',
+        pixelRatio: 2,
       });
     } finally {
       buttonsRef.current.style.visibility = 'visible';
@@ -47,7 +49,6 @@ export default function Messages({ id, author, message, date, image }) {
     setShareHint('');
     const dataUrl = await generatePng();
 
-    // Intentar Web Share API (soportado en móvil: iOS Safari, Android Chrome)
     if (navigator.share && navigator.canShare) {
       try {
         const blob = await fetch(dataUrl).then((r) => r.blob());
@@ -61,7 +62,6 @@ export default function Messages({ id, author, message, date, image }) {
       }
     }
 
-    // Fallback: descargar imagen y abrir Instagram
     const link = document.createElement('a');
     link.download = 'mensaje.png';
     link.href = dataUrl;
@@ -74,72 +74,75 @@ export default function Messages({ id, author, message, date, image }) {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Zona de imagen: solo se renderiza si hay imagen (no deja hueco en cards sin imagen) */}
-      {image && (
-        <div className="h-28 flex items-end justify-center mb-[-3.5rem] relative z-10">
-          {!imageLoaded && (
-            <div className="size-28 rounded-full border-4 border-white shadow-lg bg-white/20 flex items-center justify-center">
-              <div className="size-8 rounded-full border-4 border-gray-300 border-t-gray-600 animate-spin" />
-            </div>
-          )}
-          <img
-            src={image}
-            alt="profile"
-            onLoad={() => setImageLoaded(true)}
-            className={`size-28 rounded-full object-cover border-4 border-white shadow-lg transition-opacity duration-300 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0 absolute'
-            }`}
-          />
-        </div>
-      )}
-
-      {/* Tarjeta */}
-      <div
-        ref={cardRef}
-        className="bg-white/90 border-2 min-w-72 w-full max-w-96 h-56 rounded-[2.5rem] relative flex justify-center items-center"
-        id={`card-${id}`}
-      >
-        {/* Puntos estilo macOS */}
-        <div className="absolute top-5 start-6 flex space-x-2">
-          <div className="w-3 h-3 bg-red-600 rounded-full" />
-          <div className="w-3 h-3 bg-yellow-400 rounded-full" />
-          <div className="w-3 h-3 bg-green-600 rounded-full" />
-        </div>
-
-        <ResponsiveText message={message} />
-
-        <div
-          ref={buttonsRef}
-          className="absolute bottom-4 w-full px-4 select-none flex flex-row-reverse justify-between"
-        >
-          {/* Guardar como PNG */}
-          <button
-            type="button"
-            className="hover:bg-gray-400/10 rounded-full p-1"
-            onClick={handlerSaveImage}
-            title="Guardar imagen"
-          >
-            <ShareIcon />
-          </button>
-          {/* Compartir a Instagram */}
-          <button
-            type="button"
-            className="hover:bg-gray-400/10 rounded-full p-1"
-            onClick={handlerShareToInstagram}
-            title="Compartir en Instagram"
-          >
-            <ShareIconIg />
-          </button>
-        </div>
-
-        {author !== 'Anónimx' && (
-          <h3 className="px-3 py-1 text-xs rounded-[2.5rem] absolute bottom-2 bg-gray-400/20">
-            {author}
-          </h3>
+      {/*
+        wrapperRef = zona capturada al guardar/compartir.
+        Contiene la imagen circular flotante + la card blanca.
+        Fondo transparente → el PNG respeta el border-radius de la card y la forma circular de la imagen.
+      */}
+      <div ref={wrapperRef} className="flex flex-col items-center">
+        {/* Imagen circular: solo si existe, flota sobre la card */}
+        {image && (
+          <div className="h-28 flex items-end justify-center mb-[-3.5rem] relative z-10">
+            {!imageLoaded && (
+              <div className="size-28 rounded-full border-4 border-white shadow-lg bg-white/20 flex items-center justify-center">
+                <div className="size-8 rounded-full border-4 border-gray-300 border-t-gray-600 animate-spin" />
+              </div>
+            )}
+            <img
+              src={image}
+              alt="profile"
+              onLoad={() => setImageLoaded(true)}
+              className={`size-28 rounded-full object-cover border-4 border-white shadow-lg transition-opacity duration-300 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0 absolute'
+              }`}
+            />
+          </div>
         )}
+
+        {/* Tarjeta — bg-white (sin /90) para que el PNG no tenga transparencia parcial */}
+        <div
+          className="bg-white border-2 min-w-72 w-full max-w-96 h-56 rounded-[2.5rem] relative flex justify-center items-center"
+          id={`card-${id}`}
+        >
+          {/* Puntos estilo macOS */}
+          <div className="absolute top-5 start-6 flex space-x-2">
+            <div className="w-3 h-3 bg-red-600 rounded-full" />
+            <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+            <div className="w-3 h-3 bg-green-600 rounded-full" />
+          </div>
+
+          <ResponsiveText message={message} />
+
+          <div
+            ref={buttonsRef}
+            className="absolute bottom-4 w-full px-4 select-none flex flex-row-reverse justify-between"
+          >
+            <button
+              type="button"
+              className="hover:bg-gray-400/10 rounded-full p-1"
+              onClick={handlerSaveImage}
+              title="Guardar imagen"
+            >
+              <ShareIcon />
+            </button>
+            <button
+              type="button"
+              className="hover:bg-gray-400/10 rounded-full p-1"
+              onClick={handlerShareToInstagram}
+              title="Compartir en Instagram"
+            >
+              <ShareIconIg />
+            </button>
+          </div>
+
+          {author !== 'Anónimx' && (
+            <h3 className="px-3 py-1 text-xs rounded-[2.5rem] absolute bottom-2 bg-gray-400/20">
+              {author}
+            </h3>
+          )}
+        </div>
       </div>
 
-      {/* Hint de compartir (aparece brevemente en fallback) */}
       {shareHint && (
         <p className="mt-3 text-white/70 text-xs text-center max-w-72 px-2">{shareHint}</p>
       )}

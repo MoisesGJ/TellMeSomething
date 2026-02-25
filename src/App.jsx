@@ -56,8 +56,17 @@ function App() {
   };
 
 
+  // Validación estricta de 1 imagen: si ya hay imagen seleccionada, quítala.
+  // El input[type=file] solo acepta 1 archivo (sin `multiple`), pero esto refuerza
+  // que el usuario entiende que no puede tener más de 1 imagen por mensaje.
   const handleButtonClick = () => {
-    fileInputRef.current.click();
+    if (file) {
+      setFile(null);
+      fileInputRef.current.value = '';
+      setCooldownError('');
+    } else {
+      fileInputRef.current.click();
+    }
   };
 
   const getDate = () => {
